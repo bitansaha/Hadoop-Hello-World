@@ -28,6 +28,9 @@ public class WordCount extends Configured implements Tool{
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
+		// Using the default mapper class as because the custom Input Format and Record Reader parse and provide each Word as
+		// inputs, compared to the LongWritable (offset) and a Text (line) in v1. This is done to match the Input and Output types
+		// so that the sampler can sampling with out the need for a separate Preparation job.  
 		job.setReducerClass(WordCountReducer.class);
 		
 		
@@ -43,6 +46,8 @@ public class WordCount extends Configured implements Tool{
 		job.setPartitionerClass(TotalOrderPartitioner.class);
 		
 		// InputFormatClass (RecordReader used within will define what the sampler will read out of the file)
+		// Defining a custom InputFormat and RecordReader to match the Input Types and the Output Types
+		// So that the sampler can sample the Data set without running a separate job to Prepare the Data (as in v1)
 		job.setInputFormatClass(WordFileInputFormat.class);
 		InputSampler.Sampler<Text, IntWritable> sampler = new InputSampler.RandomSampler<Text, IntWritable>(0.1, 10000, 10);
 		// This is a blocking call (probably the MR master creates the samples *buckets* in a single threaded form)
