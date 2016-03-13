@@ -42,6 +42,8 @@ public class ChainRunner extends Configured implements Tool{
 		Configuration neglectSingleWordConf = new Configuration(false);
 		ChainReducer.addMapper(job, NeglectSingleWordMapper.class, Text.class, IntWritable.class, Text.class, IntWritable.class, neglectSingleWordConf);
 		
+		job.setNumReduceTasks(10);
+		
 		return (job.waitForCompletion(true) ? 0 : 1);
 	}
 	
