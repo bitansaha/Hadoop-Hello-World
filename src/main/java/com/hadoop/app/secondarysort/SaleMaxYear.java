@@ -31,7 +31,10 @@ public class SaleMaxYear extends Configured implements Tool{
 		job.setReducerClass(SaleYearReducer.class);
 		
 		
-		// Partitioner (LocationPartitioner) makes sure that KEY's with similar 'Location' goes to the same Reducer 
+		// Partitioner (LocationPartitioner) makes sure that composite KEY's with a similar 'Location' goes to the same Reducer 
+		// (by restricting the partitioning over a limited set of attributes)
+		// By default it uses HashPartitioner which treats a composite KEY as a whole (considers all the attributes of the composite KEY)
+		// for example {Location, Year, Sale} and hence two keys with the same Location might end-up with different Reducer due to different Year/Sale 
 		job.setPartitionerClass(LocationPartitioner.class);
 		
 		// Grouping Comparator (GroupByLocationComparator) makes sure all KEY's (and their respective VALUE's) are grouped together in the Reduce phase
